@@ -1,63 +1,8 @@
-name: NPM Release
-
-on:
-  push:
-    tags:
-      - '*'
-
-permissions:
-  id-token: write  # Required for OIDC
-  contents: write
-  pages: write
-
+# Disabled for OneMind OS fork — upstream workflow not needed
+name: "DISABLED"
+on: workflow_dispatch
 jobs:
-  build:
+  skip:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-
-      - name: Update npm
-        run: npm install -g npm@latest
-
-      - name: npm install
-        run: cd api/web && npm install
-
-      - name: Build Types
-        run: cd api/web && npm run build:types
-
-      - name: Build TypeDocs
-        run: cd api/web && npm run doc
-
-      - name: Upload TypeDoc artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: ./api/web/dist/typedoc
-
-      - name: npm publish
-        run: cd api/web && npm publish --provenance --access public
-
-      - name: Generate CHANGELOG
-        run: |
-          grep -Pzo "### ${{ github.ref_name }}(?s).*?(?=###)" CHANGELOG.md > RELEASE \
-            || echo "See CHANGELOG.md for release notes" > RELEASE
-
-      - name: Github Release
-        uses: softprops/action-gh-release@v2
-        with:
-          body_path: RELEASE
-
-  deploy-pages:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy TypeDocs to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - run: echo "This workflow is disabled in the OneMind OS fork"
