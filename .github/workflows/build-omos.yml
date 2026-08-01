@@ -50,8 +50,8 @@ jobs:
           file: api/Dockerfile
           push: true
           tags: |
-            ghcr.io/onemindos/cloudtak-api:latest
-            ghcr.io/onemindos/cloudtak-api:v${{ steps.version.outputs.version }}
+            ghcr.io/onemindos/omos:latest
+            ghcr.io/onemindos/omos:v${{ steps.version.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
