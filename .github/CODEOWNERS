@@ -1,0 +1,18 @@
+# OneMind OS — CODEOWNERS
+# Enforces the "do not touch upstream files" rule from ONEMIND.md
+# Any PR modifying upstream files requires Zeus review.
+
+# Our sandbox — anyone can modify (no review needed beyond CI)
+/api/web/plugins/                   @Zeus-Delacruz
+/api/web/src/omos/                  @Zeus-Delacruz
+/api/lib/omos/                      @Zeus-Delacruz
+/.github/workflows/build-omos.yml   @Zeus-Delacruz
+/.github/workflows/upstream-sync.yml @Zeus-Delacruz
+/docs/onemind/                      @Zeus-Delacruz
+/ONEMIND.md                         @Zeus-Delacruz
+
+# EVERYTHING ELSE is upstream code — requires Zeus explicit review
+# This catches accidental edits to upstream files in PRs
+/*                                  @Zeus-Delacruz
+/api/                               @Zeus-Delacruz
+/api/web/src/                       @Zeus-Delacruz
