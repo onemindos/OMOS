@@ -1,0 +1,172 @@
+name: Weekly Upstream Sync
+
+# Automatically merges upstream CloudTAK releases into our main branch.
+#
+# HOW IT WORKS:
+# 1. Runs Mondays 09:00 UTC (or manually via workflow_dispatch)
+# 2. Finds the latest upstream release tag
+# 3. Pre-flight check: ensures we haven't touched any protected upstream files
+#    outside our allowlist — if we have, REFUSES to merge and opens an issue
+# 4. Merges the tag into main
+# 5. If merge is clean → pushes → existing build-omos.yml fires → new image
+# 6. If merge has conflicts → creates an issue labeled 'upstream-conflict'
+#    with conflicted files listed, assigns Zeus. Does NOT force anything.
+#
+# MANUAL TRIGGER:
+#   GitHub → Actions → Weekly Upstream Sync → Run workflow
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"   # Every Monday 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Specific upstream tag to merge (e.g. v13.57.4). Leave blank for latest."
+        required: false
+        type: string
+      force_mode:
+        description: "'security' = mid-week security fix, skips nothing but logs reason"
+        required: false
+        default: "normal"
+        type: string
+
+env:
+  UPSTREAM_REPO: https://github.com/dfpc-coe/CloudTAK.git
+
+jobs:
+  sync:
+    name: Merge upstream release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout OMOS (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # Need full history for tag merging
+
+      - name: Configure git identity
+        run: |
+          git config user.name "onemind-bot"
+          git config user.email "github-actions@onemindos.dev"
+
+      # ---------------------------------------------------------------
+      # STEP A: Locate the latest upstream release tag
+      # ---------------------------------------------------------------
+      - name: Add upstream remote and fetch
+        run: |
+          git remote add upstream "$UPSTREAM_REPO" || true
+          git fetch upstream --tags
+
+      - name: Determine target tag
+        id: target
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG=$(git tag --sort=-creatordate | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Target upstream tag: ${TAG}"
+          git show "${TAG}" --no-patch --format="Released: %cs%nSubject: %s"
+
+      - name: Check if already synced
+        id: skip
+        run: |
+          if git merge-base --is-ancestor "${{ steps.target.outputs.tag }}" HEAD 2>/dev/null; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "✅ v${{ steps.target.outputs.tag }} is already merged into main. Nothing to do."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ---------------------------------------------------------------
+      # STEP B: Pre-flight — verify our changes stayed in the sandbox
+      # ---------------------------------------------------------------
+      - name: Pre-flight — protected file check
+        if: steps.skip.outputs.already == 'false'
+        id: preflight
+        run: |
+          echo "Checking that our diverging commits didn't touch protected upstream files..."
+          # Commits we made that upstream does not have
+          DIVERGENT=$(git log --format=%H upstream/main..HEAD -- 2>/dev/null || echo "")
+
+          if [ -z "$DIVERGENT" ]; then
+            echo "preflight=clean" >> "$GITHUB_OUTPUT"
+            echo "✅ No diverging commits."
+            exit 0
+          fi
+
+          # Files we changed that aren't in our sandbox allowlist
+          VIOLATIONS=$(git diff --name-only $(git merge-base HEAD upstream/main) HEAD \
+            | grep -vE '^(\.github/workflows/build-omos\.yml|api/web/plugins/|api/web/src/omos/|api/lib/nats-bridge\.ts|docs/onemind/|ONEMIND\.md)' \
+            || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "preflight=violation" >> "$GITHUB_OUTPUT"
+            echo "❌ PROTECTED FILES MODIFIED:"
+            echo "$VIOLATIONS"
+          else
+            echo "preflight=clean" >> "$GITHUB_OUTPUT"
+            echo "✅ All changes are inside the OneMind sandbox."
+          fi
+
+      - name: Refuse merge if protected files were touched
+        if: steps.preflight.outputs.preflight == 'violation'
+        run: |
+          gh issue create \
+            --title "🛑 Upstream sync blocked: protected files modified" \
+            --label upstream-blocked \
+            --repo onemindos/OMOS \
+            --body "The weekly sync to ${{ steps.target.outputs.tag }} was **blocked**.
+
+          Our local commits modified these protected upstream files:
+
+          \`\`\`
+          $(git diff --name-only $(git merge-base HEAD upstream/main) HEAD)
+          \`\`\`
+
+          **Fix:** Get the file(s) back to upstream state, or add an exception. See ONEMIND.md."
+          echo "::error::Sync aborted — protected files modified. Issue created."
+          exit 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---------------------------------------------------------------
+      # STEP C: Merge
+      # ---------------------------------------------------------------
+      - name: Merge upstream tag into main
+        if: steps.skip.outputs.already == 'false'
+        id: merge
+        run: |
+          if git merge "${{ steps.target.outputs.tag }}" --no-edit -m \
+            "chore: sync upstream ${{ steps.target.outputs.tag }} [mode: ${{ github.event.inputs.force_mode || 'normal' }}]"; then
+            echo "cle merged cleanly." && echo "merged=clean" >> "$GITHUB_OUTPUT"
+          else
+            echo "merged=conflict" >> "$GITHUB_OUTPUT"
+            echo "## Conflict files:" && git diff --name-only --diff-filter=U
+            git merge --abort || true
+          fi
+
+      - name: Conflict — open issue with details
+        if: steps.merge.outputs.merged == 'conflict'
+        run: |
+          gh issue create \
+            --title "⚠️ Upstream conflicts in ${{ steps.target.outputs.tag }} — manual resolution needed" \
+            --label upstream-conflict \
+            --assignee Zeus-Delacruz \
+            --repo onemindos/OMOS \
+            --body "The automated merge of \`${{ steps.target.outputs.tag }}\` has conflicts.
+          **Likely touched our sandbox files.** See ONEMIND.md conflict runbook."
+          echo "::warning::Merge conflicts — issue created for manual resolution."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---------------------------------------------------------------
+      # STEP D: Push clean merge → build fires automatically
+      # ---------------------------------------------------------------
+      - name: Push merged main
+        if: steps.merge.outputs.merged == 'clean'
+        run: git push origin main
