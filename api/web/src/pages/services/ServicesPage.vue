@@ -1,110 +1,224 @@
 <template>
-    <div class="services-page">
+    <div class='services-page'>
         <!-- Header -->
-        <header class="services-header">
-            <div class="header-left">
-                <a href="/" class="back-link" title="Back to Map">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 12H5M12 19l-7-7 7-7" />
+        <header class='services-header'>
+            <div class='header-left'>
+                <a
+                    href='/'
+                    class='back-link'
+                    title='Back to Map'
+                >
+                    <svg
+                        width='20'
+                        height='20'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        stroke-width='2'
+                    >
+                        <path d='M19 12H5M12 19l-7-7 7-7' />
                     </svg>
                 </a>
                 <div>
-                    <h1 class="header-title">Services</h1>
-                    <p class="header-subtitle">{{ filteredTiles.length }} service{{ filteredTiles.length !== 1 ? 's' : '' }}</p>
+                    <h1 class='header-title'>
+                        Services
+                    </h1>
+                    <p class='header-subtitle'>
+                        {{ filteredTiles.length }} service{{ filteredTiles.length !== 1 ? 's' : '' }}
+                    </p>
                 </div>
             </div>
-            <div class="header-right">
-                <button class="icon-btn" :title="viewMode === 'grid' ? 'List view' : 'Grid view'" @click="toggleView">
-                    <svg v-if="viewMode === 'grid'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
-                        <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+            <div class='header-right'>
+                <button
+                    class='icon-btn'
+                    :title="viewMode === 'grid' ? 'List view' : 'Grid view'"
+                    @click='toggleView'
+                >
+                    <svg
+                        v-if="viewMode === 'grid'"
+                        width='16'
+                        height='16'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        stroke-width='2'
+                    >
+                        <line
+                            x1='8'
+                            y1='6'
+                            x2='21'
+                            y2='6'
+                        /><line
+                            x1='8'
+                            y1='12'
+                            x2='21'
+                            y2='12'
+                        /><line
+                            x1='8'
+                            y1='18'
+                            x2='21'
+                            y2='18'
+                        />
+                        <line
+                            x1='3'
+                            y1='6'
+                            x2='3.01'
+                            y2='6'
+                        /><line
+                            x1='3'
+                            y1='12'
+                            x2='3.01'
+                            y2='12'
+                        /><line
+                            x1='3'
+                            y1='18'
+                            x2='3.01'
+                            y2='18'
+                        />
                     </svg>
-                    <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-                        <rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
-                    </svg>
-                </button>
-                <button class="icon-btn" title="Edit mode" @click="editMode = !editMode">
-                    <svg v-if="!editMode" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#43e27d" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12" />
+                    <svg
+                        v-else
+                        width='16'
+                        height='16'
+                        viewBox='0 0 24 24'
+                        fill='none'
+                        stroke='currentColor'
+                        stroke-width='2'
+                    >
+                        <rect
+                            x='3'
+                            y='3'
+                            width='7'
+                            height='7'
+                        /><rect
+                            x='14'
+                            y='3'
+                            width='7'
+                            height='7'
+                        />
+                        <rect
+                            x='3'
+                            y='14'
+                            width='7'
+                            height='7'
+                        /><rect
+                            x='14'
+                            y='14'
+                            width='7'
+                            height='7'
+                        />
                     </svg>
                 </button>
             </div>
         </header>
 
         <!-- Search -->
-        <div class="search-container">
-            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+        <div class='search-container'>
+            <svg
+                class='search-icon'
+                width='14'
+                height='14'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                stroke-width='2'
+            >
+                <circle
+                    cx='11'
+                    cy='11'
+                    r='8'
+                /><line
+                    x1='21'
+                    y1='21'
+                    x2='16.65'
+                    y2='16.65'
+                />
             </svg>
             <input
-                v-model="query"
-                class="search-input"
-                placeholder="Search services..."
+                v-model='query'
+                class='search-input'
+                placeholder='Search services...'
             >
-            <button v-if="query" class="search-clear" @click="query = ''">✕</button>
+            <button
+                v-if='query'
+                class='search-clear'
+                @click='query = ""'
+            >
+                ✕
+            </button>
         </div>
 
         <!-- Categories -->
-        <main class="services-content">
+        <main class='services-content'>
             <section
-                v-for="category in orderedCategories"
-                :key="category"
-                class="category-section"
+                v-for='category in orderedCategories'
+                :key='category'
+                class='category-section'
             >
-                <div class="category-header">
-                    <span class="category-label">{{ category }}</span>
-                    <span class="category-count">{{ groups.get(category)?.length || 0 }}</span>
+                <div class='category-header'>
+                    <span class='category-label'>{{ category }}</span>
+                    <span class='category-count'>{{ groups.get(category)?.length || 0 }}</span>
                 </div>
 
                 <!-- Grid View -->
-                <div v-if="viewMode === 'grid'" class="tiles-grid">
+                <div
+                    v-if="viewMode === 'grid'"
+                    class='tiles-grid'
+                >
                     <div
-                        v-for="tile in groups.get(category)"
-                        :key="tile.id"
-                        class="tile-card"
-                        :style="{ '--accent': tile.accent }"
-                        @click="openService(tile)"
+                        v-for='tile in groups.get(category)'
+                        :key='tile.id'
+                        class='tile-card'
+                        :style='{ "--accent": tile.accent }'
+                        @click='openService(tile)'
                     >
-                        <div class="tile-top">
-                            <div class="tile-emoji" :style="{ background: tile.accent + '22' }">
+                        <div class='tile-top'>
+                            <div
+                                class='tile-emoji'
+                                :style='{ background: tile.accent + "22" }'
+                            >
                                 {{ tile.emoji }}
                                 <span
-                                    v-if="statuses.has(tile.id)"
-                                    class="status-dot"
-                                    :class="statuses.get(tile.id)"
+                                    v-if='statuses.has(tile.id)'
+                                    class='status-dot'
+                                    :class='statuses.get(tile.id)'
                                 />
                             </div>
                         </div>
-                        <div class="tile-name">{{ tile.name }}</div>
-                        <div class="tile-desc">{{ tile.description }}</div>
-                        <div class="tile-url">{{ tile.url.replace(/^https?:\/\//, '') }}</div>
+                        <div class='tile-name'>
+                            {{ tile.name }}
+                        </div>
+                        <div class='tile-desc'>
+                            {{ tile.description }}
+                        </div>
+                        <div class='tile-url'>
+                            {{ tile.url.replace(/^https?:\/\//, "") }}
+                        </div>
                     </div>
                 </div>
 
                 <!-- List View -->
-                <div v-else class="tiles-list">
+                <div
+                    v-else
+                    class='tiles-list'
+                >
                     <div
-                        v-for="tile in groups.get(category)"
-                        :key="tile.id"
-                        class="tile-row"
-                        :style="{ '--accent': tile.accent }"
-                        @click="openService(tile)"
+                        v-for='tile in groups.get(category)'
+                        :key='tile.id'
+                        class='tile-row'
+                        :style='{ "--accent": tile.accent }'
+                        @click='openService(tile)'
                     >
-                        <span class="tile-row-emoji">{{ tile.emoji }}</span>
-                        <div class="tile-row-info">
-                            <span class="tile-row-name">{{ tile.name }}</span>
-                            <span class="tile-row-desc">{{ tile.description }}</span>
+                        <span class='tile-row-emoji'>{{ tile.emoji }}</span>
+                        <div class='tile-row-info'>
+                            <span class='tile-row-name'>{{ tile.name }}</span>
+                            <span class='tile-row-desc'>{{ tile.description }}</span>
                         </div>
-                        <span class="tile-row-url">{{ tile.url.replace(/^https?:\/\//, '') }}</span>
+                        <span class='tile-row-url'>{{ tile.url.replace(/^https?:\/\//, "") }}</span>
                         <span
-                            v-if="statuses.has(tile.id)"
-                            class="status-dot-inline"
-                            :class="statuses.get(tile.id)"
+                            v-if='statuses.has(tile.id)'
+                            class='status-dot-inline'
+                            :class='statuses.get(tile.id)'
                         />
                     </div>
                 </div>
@@ -113,7 +227,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 interface ServiceTile {
@@ -134,7 +248,6 @@ const DEFAULTS: ServiceTile[] = [
     // Platform
     { id: 'nats-mon', name: 'NATS Monitor', description: 'NATS server monitoring', url: 'https://nats-mon.onemindos.dev', accent: '#00d4ff', emoji: '📈', category: 'Platform' },
     { id: 'argocd', name: 'ArgoCD', description: 'GitOps continuous delivery', url: 'https://argocd.onemindos.dev', accent: '#f97316', emoji: '🚀', category: 'Platform' },
-    { id: 'clickhouse', name: 'ClickHouse', description: 'OLAP analytics database', url: 'https://grafana.tail717ba0.ts.net', accent: '#facc15', emoji: '🗄️', category: 'Platform' },
     { id: 'grafana', name: 'Grafana', description: 'Metrics, logs & traces', url: 'https://grafana.onemindos.dev', accent: '#f59e0b', emoji: '📊', category: 'Platform' },
     // Agents
     { id: 'hermes', name: 'Hermes', description: 'AI agent & workflow UI', url: 'https://hermes.onemindos.dev', accent: '#22d3ee', emoji: '⚡', category: 'Agents' },
@@ -158,7 +271,6 @@ type StatusState = 'up' | 'down' | 'pending';
 const tiles = ref<ServiceTile[]>(DEFAULTS);
 const query = ref('');
 const viewMode = ref<'grid' | 'compact'>('grid');
-const editMode = ref(false);
 const statuses = ref<Map<string, StatusState>>(new Map());
 
 const filteredTiles = computed(() => {
@@ -190,7 +302,6 @@ function openService(tile: ServiceTile) {
     window.open(tile.url, '_blank', 'noopener,noreferrer');
 }
 
-// Simple health check for internal URLs
 let probeInterval: ReturnType<typeof setInterval> | null = null;
 
 function isMonitored(url: string): boolean {
@@ -233,20 +344,13 @@ onUnmounted(() => {
     max-width: 1200px;
     margin: 0 auto;
 }
-
 .services-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
 }
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
+.header-left { display: flex; align-items: center; gap: 12px; }
 .back-link {
     display: flex;
     align-items: center;
@@ -259,28 +363,10 @@ onUnmounted(() => {
     text-decoration: none;
     transition: all 0.15s;
 }
-.back-link:hover {
-    background: rgba(255,255,255,0.05);
-    color: white;
-}
-
-.header-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 0;
-}
-
-.header-subtitle {
-    font-size: 12px;
-    color: #64748b;
-    margin: 2px 0 0;
-}
-
-.header-right {
-    display: flex;
-    gap: 8px;
-}
-
+.back-link:hover { background: rgba(255,255,255,0.05); color: white; }
+.header-title { font-size: 18px; font-weight: 700; margin: 0; }
+.header-subtitle { font-size: 12px; color: #64748b; margin: 2px 0 0; }
+.header-right { display: flex; gap: 8px; }
 .icon-btn {
     display: flex;
     align-items: center;
@@ -294,15 +380,8 @@ onUnmounted(() => {
     cursor: pointer;
     transition: all 0.15s;
 }
-.icon-btn:hover {
-    background: rgba(255,255,255,0.05);
-    color: white;
-}
-
-.search-container {
-    position: relative;
-    margin-bottom: 24px;
-}
+.icon-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+.search-container { position: relative; margin-bottom: 24px; }
 .search-icon {
     position: absolute;
     left: 12px;
@@ -319,10 +398,9 @@ onUnmounted(() => {
     color: #e2e8f0;
     font-size: 14px;
     outline: none;
+    box-sizing: border-box;
 }
-.search-input:focus {
-    border-color: rgba(0, 212, 255, 0.4);
-}
+.search-input:focus { border-color: rgba(0, 212, 255, 0.4); }
 .search-clear {
     position: absolute;
     right: 12px;
@@ -333,19 +411,8 @@ onUnmounted(() => {
     color: #64748b;
     cursor: pointer;
 }
-
-.services-content {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-}
-
-.category-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-}
+.services-content { display: flex; flex-direction: column; gap: 28px; }
+.category-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .category-label {
     font-size: 11px;
     font-weight: 700;
@@ -360,14 +427,11 @@ onUnmounted(() => {
     padding: 1px 6px;
     border-radius: 4px;
 }
-
-/* Grid */
 .tiles-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 12px;
 }
-
 .tile-card {
     position: relative;
     padding: 16px;
@@ -381,10 +445,7 @@ onUnmounted(() => {
     background: color-mix(in srgb, var(--accent) 10%, transparent);
     transform: translateY(-1px);
 }
-
-.tile-top {
-    margin-bottom: 10px;
-}
+.tile-top { margin-bottom: 10px; }
 .tile-emoji {
     position: relative;
     display: inline-flex;
@@ -395,7 +456,6 @@ onUnmounted(() => {
     border-radius: 8px;
     font-size: 18px;
 }
-
 .status-dot {
     position: absolute;
     bottom: -2px;
@@ -408,12 +468,7 @@ onUnmounted(() => {
 .status-dot.up { background: #43e27d; box-shadow: 0 0 4px #43e27d; }
 .status-dot.down { background: #ef4444; }
 .status-dot.pending { background: #94a3b8; }
-
-.tile-name {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 2px;
-}
+.tile-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
 .tile-desc {
     font-size: 11px;
     color: #64748b;
@@ -434,13 +489,7 @@ onUnmounted(() => {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
-/* List */
-.tiles-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+.tiles-list { display: flex; flex-direction: column; gap: 4px; }
 .tile-row {
     display: flex;
     align-items: center;
@@ -453,9 +502,7 @@ onUnmounted(() => {
     cursor: pointer;
     transition: all 0.15s;
 }
-.tile-row:hover {
-    background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
+.tile-row:hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
 .tile-row-emoji { font-size: 16px; }
 .tile-row-info { flex: 1; min-width: 0; }
 .tile-row-name { font-size: 13px; font-weight: 500; }

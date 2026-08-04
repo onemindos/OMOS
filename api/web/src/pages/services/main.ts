@@ -2,7 +2,9 @@ import { createApp } from 'vue'
 import * as VueRouter from 'vue-router'
 import { createPinia } from 'pinia'
 
-import App from '../../App.vue'
+import ServicesPage from './ServicesPage.vue'
+
+import '@tabler/core/dist/css/tabler.min.css';
 
 const router = VueRouter.createRouter({
     history: VueRouter.createWebHistory(),
@@ -10,12 +12,12 @@ const router = VueRouter.createRouter({
         {
             path: '/services',
             name: 'services',
-            component: () => import('./ServicesPage.vue'),
+            component: ServicesPage,
         }
     ]
 });
 
-const app = createApp(App);
+const app = createApp(ServicesPage);
 const pinia = createPinia();
 app.use(router);
 app.use(pinia);
