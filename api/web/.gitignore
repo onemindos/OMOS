@@ -1,3 +1,4 @@
 dist/
 dev-dist/
-plugins/
+# OneMind: plugins are committed in this fork (not git-ignored)
+# plugins/
