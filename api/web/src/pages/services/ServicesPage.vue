@@ -31,11 +31,11 @@
             <div class='header-right'>
                 <button
                     class='icon-btn'
-                    :title="viewMode === 'grid' ? 'List view' : 'Grid view'"
+                    :title='isGridView ? "List view" : "Grid view"'
                     @click='toggleView'
                 >
                     <svg
-                        v-if="viewMode === 'grid'"
+                        v-if='isGridView'
                         width='16'
                         height='16'
                         viewBox='0 0 24 24'
@@ -162,7 +162,7 @@
 
                 <!-- Grid View -->
                 <div
-                    v-if="viewMode === 'grid'"
+                    v-if='isGridView'
                     class='tiles-grid'
                 >
                     <div
@@ -293,6 +293,8 @@ const groups = computed(() => {
 });
 
 const orderedCategories = computed(() => [...groups.value.keys()]);
+
+const isGridView = computed(() => viewMode.value === 'grid');
 
 function toggleView() {
     viewMode.value = viewMode.value === 'grid' ? 'compact' : 'grid';
