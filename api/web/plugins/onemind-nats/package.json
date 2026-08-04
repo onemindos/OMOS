@@ -1,0 +1,17 @@
+{
+  "name": "onemind-nats",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "check": "vue-tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tak-ps/cloudtak": "file:../../",
+    "@tak-ps/vue-tabler": "^4.2.1",
+    "typescript": "^6.0.2",
+    "vue": "^3.5.26",
+    "vue-tsc": "^3.2.2"
+  }
+}
